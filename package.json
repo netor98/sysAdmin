@@ -1,14 +1,15 @@
 {
-  "name": "y",
-  "version": "0.0.1",
-  "description": "First homework, create a dhcp server",
-  "main": "1-dhcp.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "me",
-  "license": "ISC",
-  "dependencies": {
-    "colors": "^1.4.0"
-  }
+    "name": "y",
+    "version": "0.0.1",
+    "description": "First homework, create a dhcp server",
+    "main": "1-dhcp.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "me",
+    "license": "ISC",
+    "dependencies": {
+        "colors": "^1.4.0",
+        "inquirer": "^9.2.14"
+    }
 }
