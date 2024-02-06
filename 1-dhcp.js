@@ -1,17 +1,20 @@
 require("colors");
-const { saveIpStart, pausa, saveIpEnd } = require("./helpers/mensajes.js");
-const { menuInquirer } = require("./helpers/questions.js");
+const os = require("os");
+const {
+    saveIpStart,
+    pausa,
+    saveIpEnd,
+    saveGateaway,
+} = require("./helpers/mensajes.js");
 console.clear();
 
 const main = async () => {
-    /*
+    console.log(os.platform());
     const ips = await saveIpStart();
     const ipsEnd = await saveIpEnd();
-    console.log(ips, ipsEnd);
+    const gateaway = await saveGateaway();
+    console.log(ips, ipsEnd, gateaway);
     pausa();
-    */
-    opt = await menuInquirer();
-    console.log(opt.opcion);
 };
 
 main();

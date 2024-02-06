@@ -38,6 +38,23 @@ const saveIpEnd = () => {
     });
 };
 
+const saveGateaway = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(
+            `${"3.".blue} Ingresa la puerta de enlace ${"(gateaway)".gray}: `,
+            (gateaway) => {
+                readline.close();
+                resolve(gateaway);
+            }
+        );
+    });
+};
+
 const pausa = () => {
     return new Promise((resolve) => {
         const readline = require("readline").createInterface({
@@ -59,4 +76,5 @@ module.exports = {
     saveIpStart,
     pausa,
     saveIpEnd,
+    saveGateaway,
 };

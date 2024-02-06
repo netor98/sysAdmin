@@ -9,7 +9,6 @@
     "author": "me",
     "license": "ISC",
     "dependencies": {
-        "colors": "^1.4.0",
-        "inquirer": "^9.2.14"
+        "colors": "^1.4.0"
     }
 }
