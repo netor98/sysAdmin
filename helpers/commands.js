@@ -3,13 +3,21 @@ require("colors");
 
 function isPackageInstalled(os) {
     let command;
-    if (os == "linux") command = "dpkg -l | grep -w isc-dhcp-server";
-    else command = "powershell Get-Service -Name 'Dhcp Server'";
-    return new Promise((resolve) => {
-        exec(command, (error, stdout, stderr) => {
-            resolve(!error && stdout.includes("isc-dhcp-server"));
+    if (os == "linux") {
+        command = "dpkg -l | grep -w isc-dhcp-server";
+        return new Promise((resolve) => {
+            exec(command, (error, stdout, stderr) => {
+                resolve(!error && stdout.includes("isc-dhcp-server"));
+            });
         });
-    });
+    } else {
+        command = "powershell Get-Service -Name 'Dhcp Server'";
+        return new Promise((resolve) => {
+            exec(command, (error, stdout, stderr) => {
+                resolve(stdout.trim() === "Installed");
+            });
+        });
+    }
 }
 
 const consoleAnimation = (text, result) => {

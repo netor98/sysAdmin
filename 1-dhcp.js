@@ -24,7 +24,7 @@ const main = async () => {
     );
 
     if (osName !== "win32") packageNameToCheck = "isc-dhcp-server";
-    else packageNameToCheck = "win32";
+    else packageNameToCheck = "Dhcp-server";
 
     const searchPackage = await isPackageInstalled(osName);
     if (searchPackage)
