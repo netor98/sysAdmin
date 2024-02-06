@@ -9,6 +9,40 @@ const menuStart = () => {
     });
 };
 
+const saveIpNetwork = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(
+            `${"1.".blue} Ingresa la dirección de la red: `,
+            (ip) => {
+                readline.close();
+                resolve(ip);
+            }
+        );
+    });
+};
+
+const saveMask = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(
+            `${"2.".blue} Ingresa la mascara de la red: `,
+            (mask) => {
+                readline.close();
+                resolve(mask);
+            }
+        );
+    });
+};
+
 const saveIpStart = () => {
     return new Promise((resolve) => {
         const readline = require("readline").createInterface({
@@ -17,7 +51,7 @@ const saveIpStart = () => {
         });
 
         readline.question(
-            `${"1.".blue} Ingresa el rango inicial de ip's: `,
+            `${"3.".blue} Ingresa el rango inicial de ip's: `,
             (ipsEnd) => {
                 readline.close();
                 resolve(ipsEnd);
@@ -34,7 +68,7 @@ const saveIpEnd = () => {
         });
 
         readline.question(
-            `${"2.".blue} Ingresa el rango final de ip's: `,
+            `${"4.".blue} Ingresa el rango final de ip's: `,
             (ipsEnd) => {
                 readline.close();
                 resolve(ipsEnd);
@@ -51,12 +85,40 @@ const saveGateaway = () => {
         });
 
         readline.question(
-            `${"3.".blue} Ingresa la puerta de enlace ${"(gateaway)".gray}: `,
+            `${"5.".blue} Ingresa la puerta de enlace ${"(gateaway)".gray}: `,
             (gateaway) => {
                 readline.close();
                 resolve(gateaway);
             }
         );
+    });
+};
+
+const saveDNS = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(`${"6.".blue} Ingresa el DNS: `, (dns) => {
+            readline.close();
+            resolve(dns);
+        });
+    });
+};
+
+const saveReleaseTime = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(`${"7.".blue} Ingresa el tiempo máximo: `, (time) => {
+            readline.close();
+            resolve(time);
+        });
     });
 };
 
@@ -69,7 +131,7 @@ const pausa = () => {
 
         readline.question(
             `\nPresione ${" ENTER ".green} para continuar`,
-            (ips) => {
+            () => {
                 readline.close();
                 resolve();
             }
@@ -83,4 +145,8 @@ module.exports = {
     pausa,
     saveIpEnd,
     saveGateaway,
+    saveDNS,
+    saveReleaseTime,
+    saveIpNetwork,
+    saveMask,
 };

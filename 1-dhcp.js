@@ -9,6 +9,10 @@ const {
     pausa,
     saveIpEnd,
     saveGateaway,
+    saveDNS,
+    saveReleaseTime,
+    saveIpNetwork,
+    saveMask,
 } = require("./helpers/mensajes.js");
 
 const {
@@ -18,6 +22,8 @@ const {
 console.clear();
 
 const main = async () => {
+    let currentConfig = fs.readFileSync("/etc/dhcp/dhcpd.conf", "utf-8");
+    currentConfig = currentConfig.replace(/subnet [\s\S]+?}/, "");
     let packageNameToCheck = "";
     menuStart();
 
@@ -42,21 +48,26 @@ const main = async () => {
         );
     }
 
+    const ipNet = await saveIpNetwork();
+    const mask = await saveMask();
     const ips = await saveIpStart();
     const ipsEnd = await saveIpEnd();
     const gateaway = await saveGateaway();
+    const dns = await saveDNS();
+    const time = await saveReleaseTime();
 
     dhcpConfig = `
-    subnet 192.168.75.0 netmask 255.255.255.0 {
+    subnet ${ipNet} netmask ${mask} {
         range ${ips} ${ipsEnd};
         option domain-name-servers example.org;
-        option domain-name "example.org";
-        option subnet-mask 255.255.255.0;
-        option routers 192.168.0.1;
-        default-lease-time 600;
+        option domain-name ${dns};
+        option subnet-mask ${mask};
+        option routers ${gateaway};
+        default-lease-time ${time};
     }`;
 
-    fs.appendFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
+    const updatedConfig = currentConfig.trim() + "\n" + dhcpConfig.trim();
+    fs.writeFileSync("/etc/dhcp/dhcpd.conf", updatedConfig);
     execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
     pausa();
 };
