@@ -23,8 +23,6 @@ const {
 console.clear();
 
 const main = async () => {
-    let currentConfig = fs.readFileSync("/etc/dhcp/dhcpd.conf", "utf-8");
-    currentConfig = currentConfig.replace(/subnet [\s\S]+?}/, "");
     let packageNameToCheck = "";
     menuStart();
 
