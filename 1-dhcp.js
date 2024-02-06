@@ -1,4 +1,7 @@
 require("colors");
+const fs = require("fs");
+const { execSync } = require("child_process");
+
 const os = require("os");
 const {
     menuStart,
@@ -42,7 +45,19 @@ const main = async () => {
     const ips = await saveIpStart();
     const ipsEnd = await saveIpEnd();
     const gateaway = await saveGateaway();
-    console.log(ips, ipsEnd, gateaway, osName);
+
+    dhcpConfig = `
+    subnet 192.168.75.0 netmask 255.255.255.0 {
+        range ${ips} ${ipsEnd};
+        option domain-name-servers example.org;
+        option domain-name "example.org";
+        option subnet-mask 255.255.255.0;
+        option routers 192.168.0.1;
+        default-lease-time 600;
+    }`;
+
+    fs.appendFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
+    execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
     pausa();
 };
 
