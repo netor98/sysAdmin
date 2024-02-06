@@ -18,6 +18,7 @@ const {
 const {
     consoleAnimation,
     isPackageInstalled,
+    powershellCommands,
 } = require("./helpers/commands.js");
 console.clear();
 
@@ -59,16 +60,19 @@ const main = async () => {
     dhcpConfig = `
     subnet ${ipNet} netmask ${mask} {
         range ${ips} ${ipsEnd};
-        option domain-name-servers example.org;
-        option domain-name ${dns};
+        option domain-name-servers ${dns};
+        option domain-name "example.org";
         option subnet-mask ${mask};
         option routers ${gateaway};
         default-lease-time ${time};
     }`;
 
-    const updatedConfig = currentConfig.trim() + "\n" + dhcpConfig.trim();
-    fs.writeFileSync("/etc/dhcp/dhcpd.conf", updatedConfig);
-    execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
+    if (osName == "linux") {
+        fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
+        execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
+    } else {
+        powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
+    }
     pausa();
 };
 

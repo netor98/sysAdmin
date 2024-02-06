@@ -43,7 +43,29 @@ const consoleAnimation = (text, result) => {
     });
 };
 
+const powershellCommands = (ipStart, ipEnd, mask, gateaway, time, dns) => {
+    const commands = [
+        "Install-WindowsFeature -Name DHCP -IncludeManagementTools", // Instalar la característica DHCP
+        `Add-DhcpServerv4Scope -Name "MyScope" -StartRange ${ipStart} -EndRange ${ipEnd} -SubnetMask ${mask} -State Active`, // Agregar un ámbito DHCP IPv4
+        `Set-DhcpServerv4OptionValue -OptionID 6 -Value "${gateaway}"`, // Establecer la puerta de enlace predeterminada
+        `Set-DhcpServerv4OptionValue -OptionID 3 -Value "${gateaway}"`, // Establecer la puerta de enlace del router
+        `Set-DhcpServerv4OptionValue -OptionID 51 -Value "${time}`, // Establecer el tiempo de concesión predeterminado en segundos (86400 segundos = 24 horas)
+        `Set-DhcpServerv4OptionValue -OptionID 6 -DNSserver "${dns}"`, // Establecer el servidor DNS
+    ];
+
+    commands.forEach((command) => {
+        try {
+            execSync(`powershell -Command "& { ${command} }"`, {
+                stdio: "inherit",
+            });
+        } catch (error) {
+            console.error(`Error al ejecutar el comando: ${command}`, error);
+        }
+    });
+};
+
 module.exports = {
     consoleAnimation,
     isPackageInstalled,
+    powershellCommands,
 };
