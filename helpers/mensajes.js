@@ -1,21 +1,26 @@
 require("colors");
 
-const saveIpStart = () => {
+const menuStart = () => {
     return new Promise((resolve) => {
         console.log("=======================".brightYellow);
         console.log("     SERVIDOR DHCP".brightYellow);
         console.log("=======================\n".brightYellow);
+        resolve();
+    });
+};
 
+const saveIpStart = () => {
+    return new Promise((resolve) => {
         const readline = require("readline").createInterface({
             input: process.stdin,
             output: process.stdout,
         });
 
         readline.question(
-            `${"1.".blue} Ingresa rango inicial de ip's: `,
-            (ipsStart) => {
+            `${"1.".blue} Ingresa el rango inicial de ip's: `,
+            (ipsEnd) => {
                 readline.close();
-                resolve(ipsStart);
+                resolve(ipsEnd);
             }
         );
     });
@@ -29,7 +34,7 @@ const saveIpEnd = () => {
         });
 
         readline.question(
-            `${"2.".blue} Ingresa rango final de ip's: `,
+            `${"2.".blue} Ingresa el rango final de ip's: `,
             (ipsEnd) => {
                 readline.close();
                 resolve(ipsEnd);
@@ -73,6 +78,7 @@ const pausa = () => {
 };
 
 module.exports = {
+    menuStart,
     saveIpStart,
     pausa,
     saveIpEnd,
