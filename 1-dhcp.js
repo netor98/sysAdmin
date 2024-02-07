@@ -84,7 +84,11 @@ const main = async () => {
             `${ipServer}${prefix}`
         );
         execSync("netplan apply");
-        execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
+        try {
+            execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
+        } catch (err) {
+            console.log(err);
+        }
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
