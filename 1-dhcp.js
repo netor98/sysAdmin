@@ -17,6 +17,7 @@ const {
 } = require("./helpers/mensajes.js");
 
 const { replaceIpServer } = require("./helpers/functions.js");
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const {
     consoleAnimation,
@@ -96,15 +97,20 @@ const main = async () => {
                 return;
             }
 
-            const processStop = exec("sudo systemctl restart isc-dhcp-server");
+            const processStop = exec("sudo systemctl stop isc-dhcp-server");
 
-            processStop.on("exit", (code) => {
+            processStop.on("exit", async (code) => {
                 if (code === 0) {
-                    console.log("SERVICIO DHCP REINICIADO");
-
+                    await delay(2000); // Add a delay of 2 seconds
                     // Start the DHCP service after stopping
+                    const processStart = exec(
+                        "sudo systemctl start isc-dhcp-server"
+                    );
+
+                    processStart.on("exit", (code) => {
+                        console.log("\nSERVICIO DHCP RENICIADO\n");
+                    });
                 } else {
-                    console.error("Failed to stop ISC DHCP service");
                 }
             });
         });
