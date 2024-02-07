@@ -95,8 +95,10 @@ const main = async () => {
             }
         });
 
-        const process = spawn("bash", ["./restrtService.sh"]);
-        process.on("exit", (code) => {});
+        const processRestart = spawn("systemctl restart isc-dhcp-server");
+        processRestart.on("exit", (code) => {
+            console.log("Servicio dhcp reiniciado");
+        });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
