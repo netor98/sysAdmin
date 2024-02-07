@@ -83,12 +83,19 @@ const main = async () => {
             "/etc/netplan/00-installer-config.yaml",
             `${ipServer}${prefix}`
         );
-        execSync("netplan apply");
-        try {
-            execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
-        } catch (err) {
-            console.log(err);
-        }
+        exec("systemctl restart isc-dhcp-server", (error, stdout, stderr) => {
+            if (error) {
+                console.error(`error: ${error.message}`);
+                return;
+            }
+
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+                return;
+            }
+
+            console.log(`stdout:\n${stdout}`);
+        });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
