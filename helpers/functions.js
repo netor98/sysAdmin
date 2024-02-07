@@ -1,5 +1,5 @@
 const fs = require("fs");
-const buscarTextoEnArchivo = (filePath) => {
+const buscarTextoEnArchivo = (filePath, newIp) => {
     const searchText = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d+\b/g;
 
     fs.readFile(filePath, "utf8", (err, data) => {
@@ -8,14 +8,17 @@ const buscarTextoEnArchivo = (filePath) => {
             return;
         }
 
-        // Buscar el texto en el contenido del archivo
-        const matches = data.match(searchText);
+        // Reemplazar el texto en el contenido del archivo
+        const newData = data.replace(searchText, newIp);
 
-        if (matches) {
-            console.log("El texto se encontró en el archivo:", matches);
-        } else {
-            console.log("El texto no se encontró en el archivo.");
-        }
+        // Escribir los cambios en el archivo
+        fs.writeFile(filePath, newData, "utf8", (err) => {
+            if (err) {
+                console.error("Error al escribir en el archivo:", err);
+                return;
+            }
+            console.log("El texto se reemplazó en el archivo correctamente.");
+        });
     });
 };
 

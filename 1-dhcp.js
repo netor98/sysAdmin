@@ -23,6 +23,8 @@ const {
     isPackageInstalled,
     powershellCommands,
 } = require("./helpers/commands.js");
+
+const prefix = "";
 console.clear();
 
 const main = async () => {
@@ -75,7 +77,14 @@ const main = async () => {
         //fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
         //execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
         console.log(dhcpConfig);
-        buscarTextoEnArchivo("/etc/netplan/00-installer-config.yaml");
+        if (mask == "255.255.255.0") prefix = "/24";
+        if (mask == "255.255.0.0") prefix = "/32";
+        if (mask == "255.0.0.0") prefix = "/40";
+
+        buscarTextoEnArchivo(
+            "/etc/netplan/00-installer-config.yaml",
+            `${ipServer}${prefix}`
+        );
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
