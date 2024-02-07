@@ -95,9 +95,17 @@ const main = async () => {
             }
         });
 
-        const processRestart = spawn("systemctl restart isc-dhcp-server");
+        const processRestart = spawn("systemctl", [
+            "restart",
+            "isc-dhcp-server",
+        ]);
+
         processRestart.on("exit", (code) => {
-            console.log("Servicio dhcp reiniciado");
+            if (code === 0) {
+                console.log("SERVICIO DHCP REINICIADO");
+            } else {
+                console.error("Failed to restart ISC DHCP service");
+            }
         });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
