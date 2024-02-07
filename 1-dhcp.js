@@ -109,6 +109,7 @@ const main = async () => {
 
                     processStart.on("exit", (code) => {
                         console.log("\nSERVICIO DHCP RENICIADO\n");
+                        pausa();
                     });
                 } else {
                 }
@@ -117,7 +118,6 @@ const main = async () => {
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
-    pausa();
 };
 
 main();
