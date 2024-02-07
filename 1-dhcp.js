@@ -16,7 +16,7 @@ const {
     saveIpServer,
 } = require("./helpers/mensajes.js");
 
-const { buscarTextoEnArchivo } = require("./helpers/functions.js");
+const { replaceIpServer } = require("./helpers/functions.js");
 
 const {
     consoleAnimation,
@@ -79,11 +79,11 @@ const main = async () => {
         if (mask == "255.255.0.0") prefix = "/32";
         if (mask == "255.0.0.0") prefix = "/40";
 
-        buscarTextoEnArchivo(
+        replaceIpServer(
             "/etc/netplan/00-installer-config.yaml",
             `${ipServer}${prefix}`
         );
-        execSync("netplan apply", { stdio: "inherit" });
+        execSync("netplan apply");
         execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
