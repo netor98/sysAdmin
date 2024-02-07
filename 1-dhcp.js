@@ -1,6 +1,6 @@
 require("colors");
 const fs = require("fs");
-const { execSync, exec } = require("child_process");
+const { spawn, exec } = require("child_process");
 
 const os = require("os");
 const {
@@ -83,7 +83,6 @@ const main = async () => {
             "/etc/netplan/00-installer-config.yaml",
             `${ipServer}${prefix}`
         );
-        execSync("netplan apply");
         exec("sudo netplan apply", (error, stdout, stderr) => {
             if (error) {
                 console.error(`error: ${error.message}`);
@@ -95,35 +94,9 @@ const main = async () => {
                 return;
             }
         });
-        exec(
-            "sudo systemctl restart isc-dhcp-server",
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`error: ${error.message}`);
-                    return;
-                }
 
-                if (stderr) {
-                    console.error(`stderr: ${stderr}`);
-                    return;
-                }
-            }
-        );
-
-        exec(
-            "sudo systemctl restart isc-dhcp-server",
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`error: ${error.message}`);
-                    return;
-                }
-
-                if (stderr) {
-                    console.error(`stderr: ${stderr}`);
-                    return;
-                }
-            }
-        );
+        const process = spawn("bash", ["./restrtService.sh"]);
+        process.on("exit", (code) => {});
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
