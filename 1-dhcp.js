@@ -95,22 +95,24 @@ const main = async () => {
             }
         });
 
-        const processRestart = spawn("systemctl", [
-            "restart",
-            "isc-dhcp-server",
-        ]);
+        const processRestart = spawn("systemctl", ["stop", "isc-dhcp-server"]);
 
         processRestart.on("exit", (code) => {
             if (code === 0) {
-                console.log("SERVICIO DHCP REINICIADO");
+                console.log("\nSERVICIO DHCP REINICIADO\n");
             } else {
                 console.error("Failed to restart ISC DHCP service");
             }
         });
+
+        const processStart = spawn("systemctl", ["start", "isc-dhcp-server"]);
+
+        processStart.on("exit", (code) => {
+            pausa();
+        });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
-    pausa();
 };
 
 main();
