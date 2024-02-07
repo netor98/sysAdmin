@@ -1,6 +1,6 @@
 require("colors");
 const fs = require("fs");
-const { execSync } = require("child_process");
+const { execSync, exec } = require("child_process");
 
 const os = require("os");
 const {
@@ -83,6 +83,7 @@ const main = async () => {
             "/etc/netplan/00-installer-config.yaml",
             `${ipServer}${prefix}`
         );
+        execSync("netplan apply");
         exec("systemctl restart isc-dhcp-server", (error, stdout, stderr) => {
             if (error) {
                 console.error(`error: ${error.message}`);
