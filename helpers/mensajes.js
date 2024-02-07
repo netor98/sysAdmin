@@ -9,6 +9,23 @@ const menuStart = () => {
     });
 };
 
+const saveIpServer = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(
+            `${"1.".blue} Ingresa la dirección del servidor: `,
+            (ip) => {
+                readline.close();
+                resolve(ip);
+            }
+        );
+    });
+};
+
 const saveIpNetwork = () => {
     return new Promise((resolve) => {
         const readline = require("readline").createInterface({
@@ -17,7 +34,7 @@ const saveIpNetwork = () => {
         });
 
         readline.question(
-            `${"1.".blue} Ingresa la dirección de la red: `,
+            `${"2.".blue} Ingresa la dirección de la red: `,
             (ip) => {
                 readline.close();
                 resolve(ip);
@@ -34,7 +51,7 @@ const saveMask = () => {
         });
 
         readline.question(
-            `${"2.".blue} Ingresa la mascara de la red: `,
+            `${"3.".blue} Ingresa la mascara de la red: `,
             (mask) => {
                 readline.close();
                 resolve(mask);
@@ -51,7 +68,7 @@ const saveIpStart = () => {
         });
 
         readline.question(
-            `${"3.".blue} Ingresa el rango inicial de ip's: `,
+            `${"4.".blue} Ingresa el rango inicial de ip's: `,
             (ipsEnd) => {
                 readline.close();
                 resolve(ipsEnd);
@@ -68,27 +85,10 @@ const saveIpEnd = () => {
         });
 
         readline.question(
-            `${"4.".blue} Ingresa el rango final de ip's: `,
+            `${"5.".blue} Ingresa el rango final de ip's: `,
             (ipsEnd) => {
                 readline.close();
                 resolve(ipsEnd);
-            }
-        );
-    });
-};
-
-const saveGateaway = () => {
-    return new Promise((resolve) => {
-        const readline = require("readline").createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-
-        readline.question(
-            `${"5.".blue} Ingresa la puerta de enlace ${"(gateaway)".gray}: `,
-            (gateaway) => {
-                readline.close();
-                resolve(gateaway);
             }
         );
     });
@@ -122,6 +122,20 @@ const saveReleaseTime = () => {
     });
 };
 
+const saveBroadcast = () => {
+    return new Promise((resolve) => {
+        const readline = require("readline").createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        readline.question(`${"8.".blue} Ingresa el broadcast: `, (broad) => {
+            readline.close();
+            resolve(broad);
+        });
+    });
+};
+
 const pausa = () => {
     return new Promise((resolve) => {
         const readline = require("readline").createInterface({
@@ -144,9 +158,10 @@ module.exports = {
     saveIpStart,
     pausa,
     saveIpEnd,
-    saveGateaway,
     saveDNS,
     saveReleaseTime,
-    saveIpNetwork,
+    saveIpServer,
     saveMask,
+    saveIpNetwork,
+    saveBroadcast,
 };

@@ -8,12 +8,15 @@ const {
     saveIpStart,
     pausa,
     saveIpEnd,
-    saveGateaway,
+    saveBroadcast,
     saveDNS,
     saveReleaseTime,
     saveIpNetwork,
     saveMask,
+    saveIpServer,
 } = require("./helpers/mensajes.js");
+
+const { buscarTextoEnArchivo } = require("./helpers/functions.js");
 
 const {
     consoleAnimation,
@@ -47,13 +50,14 @@ const main = async () => {
         );
     }
 
+    const ipServer = await saveIpServer();
     const ipNet = await saveIpNetwork();
     const mask = await saveMask();
     const ips = await saveIpStart();
     const ipsEnd = await saveIpEnd();
-    const gateaway = await saveGateaway();
     const dns = await saveDNS();
     const time = await saveReleaseTime();
+    const broadcast = await saveBroadcast();
 
     dhcpConfig = `
     subnet ${ipNet} netmask ${mask} {
@@ -61,13 +65,17 @@ const main = async () => {
         option domain-name-servers ${dns};
         option domain-name "example.org";
         option subnet-mask ${mask};
-        option routers ${gateaway};
+        option routers ${ipServer};
+        option broadcast-address ${broadcast};
         default-lease-time ${time};
+
     }`;
 
     if (osName == "linux") {
-        fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
-        execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
+        //fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
+        //execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
+        console.log(dhcpConfig);
+        buscarTextoEnArchivo("/etc/netplan/00-installer-config.yaml");
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
