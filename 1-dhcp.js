@@ -84,6 +84,17 @@ const main = async () => {
             `${ipServer}${prefix}`
         );
         execSync("netplan apply");
+        exec("sudo netplan apply", (error, stdout, stderr) => {
+            if (error) {
+                console.error(`error: ${error.message}`);
+                return;
+            }
+
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+                return;
+            }
+        });
         exec("systemctl restart isc-dhcp-server", (error, stdout, stderr) => {
             if (error) {
                 console.error(`error: ${error.message}`);
@@ -94,8 +105,6 @@ const main = async () => {
                 console.error(`stderr: ${stderr}`);
                 return;
             }
-
-            console.log(`stdout:\n${stdout}`);
         });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
