@@ -24,7 +24,7 @@ const {
     powershellCommands,
 } = require("./helpers/commands.js");
 
-const prefix = "";
+let prefix = "";
 console.clear();
 
 const main = async () => {
@@ -74,9 +74,7 @@ const main = async () => {
     }`;
 
     if (osName == "linux") {
-        //fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
-        //execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
-        console.log(dhcpConfig);
+        fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
         if (mask == "255.255.255.0") prefix = "/24";
         if (mask == "255.255.0.0") prefix = "/32";
         if (mask == "255.0.0.0") prefix = "/40";
@@ -85,6 +83,8 @@ const main = async () => {
             "/etc/netplan/00-installer-config.yaml",
             `${ipServer}${prefix}`
         );
+        execSync("sudo netplan apply");
+        execSync("systemctl restart isc-dhcp-server", { stdio: "inherit" });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }

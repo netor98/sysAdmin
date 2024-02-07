@@ -17,7 +17,6 @@ const buscarTextoEnArchivo = (filePath, newIp) => {
                 console.error("Error al escribir en el archivo:", err);
                 return;
             }
-            console.log("El texto se reemplazó en el archivo correctamente.");
         });
     });
 };
