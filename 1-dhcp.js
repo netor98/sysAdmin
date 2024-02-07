@@ -95,17 +95,20 @@ const main = async () => {
                 return;
             }
         });
-        exec("systemctl restart isc-dhcp-server", (error, stdout, stderr) => {
-            if (error) {
-                console.error(`error: ${error.message}`);
-                return;
-            }
+        exec(
+            "/bin/systemctl restart isc-dhcp-server",
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`error: ${error.message}`);
+                    return;
+                }
 
-            if (stderr) {
-                console.error(`stderr: ${stderr}`);
-                return;
+                if (stderr) {
+                    console.error(`stderr: ${stderr}`);
+                    return;
+                }
             }
-        });
+        );
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
