@@ -85,7 +85,9 @@ const main = async () => {
         );
         exec("sudo netplan apply", (error, stdout, stderr) => {
             if (error) {
-                console.error(`error: ${error.message}`);
+                console.error(
+                    `Error applying network configuration: ${error.message}`
+                );
                 return;
             }
 
@@ -93,26 +95,23 @@ const main = async () => {
                 console.error(`stderr: ${stderr}`);
                 return;
             }
-        });
 
-        const processRestart = spawn("systemctl", ["stop", "isc-dhcp-server"]);
+            const processStop = exec("sudo systemctl restart isc-dhcp-server");
 
-        processRestart.on("exit", (code) => {
-            if (code === 0) {
-                console.log("\nSERVICIO DHCP REINICIADO\n");
-            } else {
-                console.error("Failed to restart ISC DHCP service");
-            }
-        });
+            processStop.on("exit", (code) => {
+                if (code === 0) {
+                    console.log("SERVICIO DHCP REINICIADO");
 
-        const processStart = spawn("systemctl", ["start", "isc-dhcp-server"]);
-
-        processStart.on("exit", (code) => {
-            pausa();
+                    // Start the DHCP service after stopping
+                } else {
+                    console.error("Failed to stop ISC DHCP service");
+                }
+            });
         });
     } else {
         powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
     }
+    pausa();
 };
 
 main();
