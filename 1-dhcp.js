@@ -96,7 +96,22 @@ const main = async () => {
             }
         });
         exec(
-            "/bin/systemctl restart isc-dhcp-server",
+            "sudo systemctl restart isc-dhcp-server",
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`error: ${error.message}`);
+                    return;
+                }
+
+                if (stderr) {
+                    console.error(`stderr: ${stderr}`);
+                    return;
+                }
+            }
+        );
+
+        exec(
+            "sudo systemctl restart isc-dhcp-server",
             (error, stdout, stderr) => {
                 if (error) {
                     console.error(`error: ${error.message}`);
