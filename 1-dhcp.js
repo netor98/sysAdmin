@@ -1,6 +1,6 @@
 require("colors");
 const fs = require("fs");
-const { spawn, exec } = require("child_process");
+const { exec } = require("child_process");
 
 const os = require("os");
 const {
@@ -101,13 +101,12 @@ const main = async () => {
 
             processStop.on("exit", async (code) => {
                 if (code === 0) {
-                    await delay(2000); // Add a delay of 2 seconds
-                    // Start the DHCP service after stopping
+                    await delay(2000);
                     const processStart = exec(
                         "sudo systemctl start isc-dhcp-server"
                     );
 
-                    processStart.on("exit", (code) => {
+                    processStart.on("exit", () => {
                         console.log("\nSERVICIO DHCP RENICIADO\n");
                         pausa();
                     });
