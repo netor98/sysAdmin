@@ -118,7 +118,9 @@ const main = async () => {
     } else {
         const defaultInterface = 6;
         execSync(
-            `powershell New-NetIPAddress -InterfaceIndex ${defaultInterface} -IPAddress ${ipServer} -PrefixLength ${prefix}`,
+            `powershell New-NetIPAddress -InterfaceIndex ${defaultInterface} -IPAddress ${ipServer} -PrefixLength ${prefix.slice(
+                1
+            )}`,
             {
                 stdio: "inherit",
             }
