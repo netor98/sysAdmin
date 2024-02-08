@@ -120,14 +120,11 @@ const main = async () => {
         execSync(
             `powershell New-NetIPAddress -InterfaceIndex ${defaultInterface} -IPAddress ${ipServer} -PrefixLength ${prefix.slice(
                 1
-            )}`,
-            {
-                stdio: "inherit",
-            }
+            )}`
         );
 
         execSync(
-            `powershell Add-DhcpServerV4Scope ${ipServer} -StartRange ${ips} -EndRange ${ipsEnd} - SubnetMask ${mask}`,
+            `powershell Add-DhcpServerV4Scope ${ipServer} -StartRange ${ips} -EndRange ${ipsEnd} -SubnetMask ${mask}`,
             {
                 stdio: "inherit",
             }
