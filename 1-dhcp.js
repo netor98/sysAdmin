@@ -115,7 +115,9 @@ const main = async () => {
             });
         });
     } else {
-        powershellCommands(ips, ipsEnd, mask, gateaway, time, dns);
+        execSync(`echo ${ipServer} ${ips} ${ipsEnd} ${mask}`, {
+            stdio: "inherit",
+        });
     }
 };
 
