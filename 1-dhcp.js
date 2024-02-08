@@ -1,6 +1,6 @@
 require("colors");
 const fs = require("fs");
-const { exec } = require("child_process");
+const { exec, execSync } = require("child_process");
 
 const os = require("os");
 const {
@@ -62,6 +62,10 @@ const main = async () => {
     const time = await saveReleaseTime();
     const broadcast = await saveBroadcast();
 
+    if (mask == "255.255.255.0") prefix = "/24";
+    if (mask == "255.255.0.0") prefix = "/32";
+    if (mask == "255.0.0.0") prefix = "/40";
+
     dhcpConfig = `
     subnet ${ipNet} netmask ${mask} {
         range ${ips} ${ipsEnd};
@@ -76,9 +80,6 @@ const main = async () => {
 
     if (osName == "linux") {
         fs.writeFileSync("/etc/dhcp/dhcpd.conf", dhcpConfig);
-        if (mask == "255.255.255.0") prefix = "/24";
-        if (mask == "255.255.0.0") prefix = "/32";
-        if (mask == "255.0.0.0") prefix = "/40";
 
         replaceIpServer(
             "/etc/netplan/00-installer-config.yaml",
@@ -115,9 +116,29 @@ const main = async () => {
             });
         });
     } else {
-        execSync(`echo ${ipServer} ${ips} ${ipsEnd} ${mask}`, {
-            stdio: "inherit",
-        });
+        const defaultInterface = 6;
+        execSync(
+            `New-NetIPAddress -InterfaceIndex ${defaultInterface} -IPAddress ${ipServer} -PrefixLength ${prefix}`,
+            {
+                stdio: "inherit",
+            }
+        );
+
+        execSync(
+            `Add-DhcpServerV4Scope ${ipServer} -StartRange ${ips} -EndRange ${ipsEnd} - SubnetMask ${mask}`,
+            {
+                stdio: "inherit",
+            }
+        );
+
+        execSync(
+            `Set-DhcpServerV4Scope -ScopeID ${ipServer} -LeaseDuration ${time}`,
+            {
+                stdio: "inherit",
+            }
+        );
+
+        execSync("Restart-Service dhcpserver", { stdio: "inherit" });
     }
 };
 
