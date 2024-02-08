@@ -118,27 +118,27 @@ const main = async () => {
     } else {
         const defaultInterface = 6;
         execSync(
-            `New-NetIPAddress -InterfaceIndex ${defaultInterface} -IPAddress ${ipServer} -PrefixLength ${prefix}`,
+            `powershell New-NetIPAddress -InterfaceIndex ${defaultInterface} -IPAddress ${ipServer} -PrefixLength ${prefix}`,
             {
                 stdio: "inherit",
             }
         );
 
         execSync(
-            `Add-DhcpServerV4Scope ${ipServer} -StartRange ${ips} -EndRange ${ipsEnd} - SubnetMask ${mask}`,
+            `powershell Add-DhcpServerV4Scope ${ipServer} -StartRange ${ips} -EndRange ${ipsEnd} - SubnetMask ${mask}`,
             {
                 stdio: "inherit",
             }
         );
 
         execSync(
-            `Set-DhcpServerV4Scope -ScopeID ${ipServer} -LeaseDuration ${time}`,
+            `powershell Set-DhcpServerV4Scope -ScopeID ${ipServer} -LeaseDuration ${time}`,
             {
                 stdio: "inherit",
             }
         );
 
-        execSync("Restart-Service dhcpserver", { stdio: "inherit" });
+        execSync("powershell Restart-Service dhcpserver", { stdio: "inherit" });
     }
 };
 
