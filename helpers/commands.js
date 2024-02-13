@@ -20,9 +20,10 @@ function isPackageInstalled(os) {
     }
 }
 
+// Funcion que crea la animcaión de búsqueda, (SERVIRA PARA DETECTAR EL SISTEMA OPERATIVO, Y BUSCAR LOS PAQUETES)
 const consoleAnimation = (text, result) => {
     return new Promise((resolve) => {
-        const animationDelay = 500; // in milliseconds
+        const animationDelay = 500;
         const dotCount = 3;
 
         let dots = "";
