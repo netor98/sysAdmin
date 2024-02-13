@@ -1,17 +1,7 @@
 from colorama import Fore, Back, Style, init
 
-# Inicializa colorama para sistemas Windows
-init()
+print(f"{Style.BRIGHT}{Fore.YELLOW}===========================\n\tSERVIDO DNS\n===========================" + Style.RESET_ALL)
+ip = input(f"{Fore.BLUE}1. Ingresa la ip del servidor: {Style.RESET_ALL}")
 
-# Imprime texto en diferentes colores
-print(Fore.RED + 'Este texto está en rojo')
-print(Fore.GREEN + 'Este texto está en verde')
-print(Fore.YELLOW + 'Este texto está en amarillo')
-print(Fore.BLUE + 'Este texto está en azul')
-print(Fore.MAGENTA + 'Este texto está en magenta')
-print(Fore.CYAN + 'Este texto está en cian')
-print(Style.RESET_ALL)  # Restablece el color a su valor predeterminado
-
-# También puedes cambiar el color de fondo
-print(Back.RED + 'Este texto tiene fondo rojo')
-print(Style.RESET_ALL)  # Restablece el color a su valor predeterminado
+if (ip != "asd"):
+    print(f"{Style.BRIGHT}{Back.RED}Formato incorrecto. Por favor ingresa de nueva la dirección ip{Style.RESET_ALL}")
