@@ -1,76 +1,23 @@
-# Función para validar la dirección IP
-function ValidarIP {
-    param([string]$ip)
-    $ipRegex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    if($ip -match $ipRegex) {
-        return $true
-    } else {
-        return $false
-    }
-}
+# Instalación de la característica y herramientas del servidor DNS
+Install-WindowsFeature -Name DNS -IncludeManagementTools
+Install-WindowsFeature -Name RSAT-DNS-Server
 
-# Función para validar el nombre de dominio
-function ValidarDominio {
-    param([string]$dominio)
-    $dominioRegex = "^(?=.{1,253}\.?$)[a-zA-Z0-9-]{1,63}(\.[a-zA-Z0-9-]{1,63})*\.com$"
-    if ($dominio -match $dominioRegex) {
-        return $true
-    } else {
-        return $false
-    }
-}
+# Configuración inicial del servidor DNS
+$dnsServerName = Read-Host "Ingrese el nombre del servidor DNS"
+$dnsForwarderIP = Read-Host "Ingrese la dirección IP del servidor DNS reenviador"
 
-# Instalar el servidor DNS
-Install-WindowsFeature -Name 'DNS' -IncludeManagementTools
+# Configuración de la zona de búsqueda directa (Forward Lookup Zone)
+$forwardZoneName = Read-Host "Ingrese el nombre de la zona de búsqueda directa (por ejemplo: miempresa.com)"
+$ZoneNameFile = "$forwardZoneName.dns"
+Add-DnsServerPrimaryZone -Name $forwardZoneName -ZoneFile $ZoneNameFile
 
-# Mostrar adaptadores de red
-Get-NetAdapter | Select-Object Name, InterfaceIndex, InterfaceDescription
+# Configuración de reenviadores DNS
+Set-DnsServerForwarder -IPAddress $dnsForwarderIP
 
-# Solicitar el Interface Index del equipo
-$Index = Read-Host -Prompt "Ingrese el InterfaceIndex del equipo"
+# Configuración del registro de recurso (resource record) A para el servidor DNS
+$dnsServerIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -eq "Ethernet 2"}).IPAddress
+Add-DnsServerResourceRecordA -Name "@" -ZoneName $forwardZoneName -IPv4Address $dnsServerIP
+Add-DnsServerResourceRecordA -Name "www" -ZoneName $forwardZoneName -IPv4Address $dnsServerIP
 
-# Solicitar la dirección IP del equipo
-do {
-    $ServerIP = Read-Host -Prompt "Ingrese la dirección IP del equipo"
-    if (-not (ValidarIP $ServerIP)) {
-        Write-Host "ERROR: IP invalida, favor de ingresar una correctamente"
-    }
-} until (ValidarIP $ServerIP)
-Write-Host "IP valida"
-
-# Configurar el servidor DNS
-Set-DnsClientServerAddress -InterfaceIndex $Index -ServerAddresses $ServerIP
-
-# Solicitar el dominio deseado para el servidor
-do {
-    $DomainName = Read-Host -Prompt "Ingrese el nombre del dominio que quiere para el servidor"
-    if (-not (ValidarDominio $DomainName)) {
-        Write-Host "ERROR: Nombre de dominio invalido, favor de ingresar uno correctamente"
-    }
-} until (ValidarDominio $DomainName)
-Write-Host "Nombre de dominio valido"
-
-# Agregar zona primaria al servidor DNS
-Add-DnsServerPrimaryZone -Name $DomainName -ZoneFile "$DomainName.dns" -DynamicUpdate NonSecureAndSecure
-
-# Solicitar la dirección IP de la subred del equipo
-do {
-    $SubnetIP = Read-Host -Prompt "Ingrese la dirección IP de la subred del equipo"
-    if (-not (ValidarIP $SubnetIP)) {
-        Write-Host "ERROR: IP invalida, favor de ingresar una correctamente"
-    }
-} until (ValidarIP $SubnetIP)
-Write-Host "IP de la subred valida"
-
-# Solicitar los bits que determinan la Máscara del equipo
-$Length = Read-Host -Prompt "Ingrese los Bits de la Máscara"
-
-# Agregar zona inversa al servidor DNS
-$ReverseIP = $ServerIP -split '\.' | Select-Object -SkipLast 1 | ForEach-Object {$_}
-Add-DnsServerPrimaryZone -NetworkId "$SubnetIP/$Length" -ZoneFile "$ReverseIP.in-addr.arpa.dns"
-
-# Agregar registro de recurso A
-Add-DnsServerResourceRecordA -Name $DomainName -ZoneName $DomainName -IPv4Address $ServerIP -CreatePtr
-
-# Probar el servidor DNS
-Test-DnsServer -IPAddress $ServerIP -ZoneName $DomainName
+# Reiniciar el servicio de servidor DNS para aplicar los cambios
+Restart-Service DNS
